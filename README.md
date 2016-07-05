@@ -1,2 +1,6 @@
 # aede
-ms wrapper
+Wrapper project for Hudson's ms simulator.
+
+# Work in progress
+
+* merile
