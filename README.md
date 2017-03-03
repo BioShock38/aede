@@ -21,7 +21,7 @@ python setup.py install --user
 
 # Tutorial
 
-You need an array of distance in morgan called a genetic map.
+You need an array of distances in morgan also called a genetic map.
 So for each SNP you have the distance in morgan in `gen_map`.
 
 The most simple way to run a simulation, with default parameters
