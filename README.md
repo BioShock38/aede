@@ -15,7 +15,7 @@ git clone https://github.com/BioShock38/aede.git
 
 cd aede
 
-python setup install --user
+python setup.py install --user
 ```
 
 
