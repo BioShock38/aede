@@ -2,6 +2,23 @@
 
 Local Ancestry Simulation
 
+# Install
+
+From PyPI
+```bash
+pip install aede
+```
+
+From github
+```bash
+git clone https://github.com/BioShock38/aede.git
+
+cd aede
+
+python setup install --user
+```
+
+
 # Tutorial
 
 You need an array of distance in morgan called a genetic map.
