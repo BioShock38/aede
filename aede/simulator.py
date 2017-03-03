@@ -4,7 +4,7 @@ from functools import partial
 
 class LocalAncestrySimulator(object):
 
-    def __init__(self, name=None, gen_map, pipeline):
+    def __init__(self, gen_map, pipeline, name=None):
         self.name = name
         self.gen_map = gen_map
         self.pipeline = pipeline
@@ -13,7 +13,7 @@ class LocalAncestrySimulator(object):
         return self.pipeline(self.gen_map, *args, **kwargs)
 
     def __str__(self):
-        return name
+        return self.name
 
 def morgan_to_index(pos_morgan, gen_map):
     """
@@ -34,7 +34,7 @@ def cluster_builder(jumps, gen_map, a_beta, b_beta):
     alpha = stats.beta.rvs(a_beta, b_beta)
     clusters_by_region = stats.bernoulli.rvs(alpha, size=(len(jumps)+1)) 
     clusters_by_snp = np.repeat(clusters_by_region, np.ediff1d([0] + jumps + [len(gen_map)]))
-    return cluster_by_snp
+    return clusters_by_snp
 
 cluster_default = partial(cluster_builder, a_beta=0.2, b_beta=0.1)
 
@@ -46,8 +46,12 @@ def pipeline_hapmix(gen_map, pop_1, pop_2, jumps_builder, cluster_builder):
         choices = [h_1, h_2]
         jumps = jumps_builder(gen_map)
         snp_cluster = cluster_builder(jumps, gen_map)
-        h_adm.append(np.array[choices[cluster][j] for j, cluster in enumerate(snp_cluster)])
-        jump_adm.append(jumps)
+        h_adm.append(np.array([choices[cluster][j] for j, cluster in enumerate(snp_cluster)]))
+        jumps_pos = np.zeros(len(h_1), dtype=np.bool_)
+        jumps_pos[jumps] = True
+        jump_adm.append(jumps_pos)
         snp_cluster_adm.append(snp_cluster)
 
     return (np.array(h_adm), np.array(jump_adm), np.array(snp_cluster_adm))
+
+default_pipeline_hapmix = partial(pipeline_hapmix, jumps_builder=jumps_6, cluster_builder=cluster_default)
