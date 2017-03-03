@@ -1,5 +1,5 @@
 # aede
-Wrapper project for Hudson's ms simulator.
+Local Ancestry Simulation
 
 # Work in progress
 
