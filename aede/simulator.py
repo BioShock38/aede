@@ -22,21 +22,23 @@ def morgan_to_index(pos_morgan, gen_map):
     """
     return[np.searchsorted(gen_map, p) + 1 for p in pos_morgan]
 
-def jumps_builder(gen_map, lambd):
+def jumps_builder(gen_map, lambd=6):
     max_cm = gen_map[-1]
     jumps = np.cumsum(stats.expon.rvs(scale=1/float(lambd), size=1000))
     return morgan_to_index(jumps[jumps <= max_cm], gen_map)
 
 jumps_6 = partial(jumps_builder, lambd=6)
 
-def cluster_builder(jumps, gen_map, a_beta, b_beta):
+def cluster_builder(jumps, gen_map, a_beta=0.8, b_beta=0.1):
     # alpha for one individu
-    alpha = stats.beta.rvs(a_beta, b_beta)
+    param_1 = -a_beta*(b_beta + a_beta**2 - a_beta) / (b_beta)
+    param_2 = (b_beta + a_beta**2 - a_beta)*(a_beta - 1)/ (b_beta)
+    alpha = stats.beta.rvs(param_1, param_2)
     clusters_by_region = stats.bernoulli.rvs(alpha, size=(len(jumps)+1)) 
     clusters_by_snp = np.repeat(clusters_by_region, np.ediff1d([0] + jumps + [len(gen_map)]))
     return clusters_by_snp
 
-cluster_default = partial(cluster_builder, a_beta=0.2, b_beta=0.1)
+cluster_default = partial(cluster_builder, a_beta=0.8, b_beta=0.1)
 
 def pipeline_hapmix(gen_map, pop_1, pop_2, jumps_builder, cluster_builder):
     h_adm = []
