@@ -79,6 +79,7 @@ def pipeline_multiple_pops(gen_map, l_pop, lambdas, weights):
         nb_to_repeat = np.ediff1d([0] + jumps + [len(gen_map)])
         print((clusters_filtered.shape, nb_to_repeat.shape))
         clusters = np.repeat(clusters_filtered, nb_to_repeat)
+        print(clusters.shape)
         h_adm.append(np.array([choices[cluster][j] for j, cluster in enumerate(clusters)]))
         clusters_adm.append(clusters)
 
