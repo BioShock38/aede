@@ -20,7 +20,7 @@ def morgan_to_index(pos_morgan, gen_map):
     Convert an array of position in morgans into an array of index thanks to the
     genetic map
     """
-    return[np.searchsorted(gen_map, p) + 1 for p in pos_morgan]
+    return[np.searchsorted(gen_map, p) for p in pos_morgan]
 
 def jumps_builder(gen_map, lambd=6):
     max_cm = gen_map[-1]
@@ -57,3 +57,25 @@ def pipeline_hapmix(gen_map, pop_1, pop_2, jumps_builder, cluster_builder):
     return (np.array(h_adm), np.array(jump_adm), np.array(snp_cluster_adm))
 
 default_pipeline_hapmix = partial(pipeline_hapmix, jumps_builder=jumps_6, cluster_builder=cluster_default)
+
+def cluster_multiple_pops(gen_map, weights):
+    alphas = np.random.dirichlet(weights, 1)
+    clusters = np.argmax(np.random.multinomial(1, alphas, 100000), axis=1)
+    return clusters
+
+def jumps_multiple_pops(gen_map, lambdas, clusters):
+    max_cm = gen_map[-1]
+    jumps = np.cumsum([stats.expon.rvs(scale=1/float(lambdas[c]), size=1) for c in clusters])
+    return morgan_to_index(jumps[jumps < max_cm], gen_map)
+
+def pipeline_multiple_pops(gen_map, l_pop, lambdas, weights):
+    h_adm = []
+    clusters_adm = []
+    for choices in zip(l_pop):
+        clusters_all = cluster_multiple_pops(gen_map, weights)
+        jumps = jumps_multiple_pops(gen_map, lambdas, clusters_all)
+        clusters = np.repeat(clusters_all, np.ediff1d([0] + jumps + [len(gen_map)]))
+        h_adm.append(np.array([choices[cluster][j] for j, cluster in enumerate(cluster)]))
+        clusters_adm.append(clusters)
+
+    return (np.array(h_adm), np.array(clusters_adm))
