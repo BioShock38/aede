@@ -71,7 +71,7 @@ def jumps_multiple_pops(gen_map, lambdas, clusters):
 def pipeline_multiple_pops(gen_map, l_pop, lambdas, weights):
     h_adm = []
     clusters_adm = []
-    for choices in zip(l_pop):
+    for choices in zip(*l_pop):
         clusters_all = cluster_multiple_pops(gen_map, weights)
         jumps = jumps_multiple_pops(gen_map, lambdas, clusters_all)
         nb_jumps = len(jumps)
