@@ -59,7 +59,7 @@ def pipeline_hapmix(gen_map, pop_1, pop_2, jumps_builder, cluster_builder):
 default_pipeline_hapmix = partial(pipeline_hapmix, jumps_builder=jumps_6, cluster_builder=cluster_default)
 
 def cluster_multiple_pops(gen_map, weights):
-    alphas = np.random.dirichlet(weights, 1)
+    alphas = np.random.dirichlet(weights)
     clusters = np.argmax(np.random.multinomial(1, alphas, 100000), axis=1)
     return clusters
 
