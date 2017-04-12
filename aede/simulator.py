@@ -77,7 +77,7 @@ def pipeline_multiple_pops(gen_map, l_pop, lambdas, weights):
         nb_jumps = len(jumps)
         clusters_filtered = clusters_all[:nb_jumps+1]
         clusters = np.repeat(clusters_filtered, np.ediff1d([0] + jumps + [len(gen_map)]))
-        h_adm.append(np.array([choices[cluster][j] for j, cluster in enumerate(cluster)]))
+        h_adm.append(np.array([choices[cluster][j] for j, cluster in enumerate(clusters)]))
         clusters_adm.append(clusters)
 
     return (np.array(h_adm), np.array(clusters_adm))
