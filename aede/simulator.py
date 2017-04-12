@@ -25,7 +25,7 @@ def morgan_to_index(pos_morgan, gen_map):
 def jumps_builder(gen_map, lambd=6):
     max_cm = gen_map[-1]
     jumps = np.cumsum(stats.expon.rvs(scale=1/float(lambd), size=1000))
-    return morgan_to_index(jumps[jumps <= max_cm], gen_map)
+    return morgan_to_index(jumps[jumps < max_cm], gen_map)
 
 jumps_6 = partial(jumps_builder, lambd=6)
 
@@ -50,7 +50,7 @@ def pipeline_hapmix(gen_map, pop_1, pop_2, jumps_builder, cluster_builder):
         snp_cluster = cluster_builder(jumps, gen_map)
         h_adm.append(np.array([choices[cluster][j] for j, cluster in enumerate(snp_cluster)]))
         jumps_pos = np.zeros(len(h_1), dtype=np.bool_)
-        jumps_pos[jumps] = True
+        #jumps_pos[jumps] = True
         jump_adm.append(jumps_pos)
         snp_cluster_adm.append(snp_cluster)
 
