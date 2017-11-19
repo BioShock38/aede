@@ -4,11 +4,6 @@ Local Ancestry Simulation
 
 # Install
 
-From PyPI
-```bash
-pip install aede
-```
-
 From github
 ```bash
 git clone https://github.com/BioShock38/aede.git
@@ -33,10 +28,9 @@ loc_anc = simu.LocalAncestrySimulator(gen_map, simu.default_pipeline_hapmix)
 
 Then we can build admixed haplotypes with parental haplotypes
 ```python
-h_adm, jumps, clusters = loc_anc.run(pop_1=H_ceu, pop_2=H_yri)
+h_adm, clusters = loc_anc.run(pop_1=H_ceu, pop_2=H_yri)
 ```
-We obtain `h_adm` a numpy array of admixed haplotypes, `jumps` is a boolean array with True where the jumps are.
-`clusters` is an array indicating from which population is the SNP selected from.
+We obtain `h_adm` a numpy array of admixed haplotypes and `clusters` is an array indicating from which population is the SNP selected from.
 
 # Full Example
 
@@ -55,13 +49,24 @@ import aede.simulator as simu
 jumps_10 = partial(jumps_builder, lambd=10)
 
 loc_anc = simu.LocalAncestrySimulator(gen_map, simu.pipeline_hapmix)
-h_adm, jumps, clusters = loc_anc.run(pop_1=H_ceu, pop_2=H_yri,
-                                     jumps_builder=jumps_10,
-                                     cluster_builder=simu.cluster_default) 
+h_adm, clusters = loc_anc.run(pop_1=H_ceu, pop_2=H_yri,
+                              jumps_builder=jumps_10,
+                              cluster_builder=simu.cluster_default) 
 ```
 
-# Simulation Design
+# Simple Usage
 
-To customize the LocalAncestrySimulator one need to define a pipeline taking at least a 
-genetic map in input.
-When you run the simulator every parameter of the `run` will be pass to the pipeline you wrote.
+```python
+import numpy as np
+
+H_ceu = np.load("H_ceu.npy")
+H_yri = np.load("H_yri.npy")
+
+gen_map = np.load("gen_map.npy")
+
+import aede.simulator as simu
+
+# Custom lambda parameter for exponential law
+h_adm, clusters = simu.default_pipeline_hapmix()
+```
+

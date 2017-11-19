@@ -42,25 +42,21 @@ cluster_default = partial(cluster_builder, a_beta=0.8, b_beta=0.1)
 
 def pipeline_hapmix(gen_map, pop_1, pop_2, jumps_builder, cluster_builder):
     h_adm = []
-    jump_adm = []
     snp_cluster_adm = []
     for h_1, h_2 in zip(pop_1, pop_2):
         choices = [h_1, h_2]
         jumps = jumps_builder(gen_map)
         snp_cluster = cluster_builder(jumps, gen_map)
         h_adm.append(np.array([choices[cluster][j] for j, cluster in enumerate(snp_cluster)]))
-        jumps_pos = np.zeros(len(h_1), dtype=np.bool_)
-        #jumps_pos[jumps] = True
-        jump_adm.append(jumps_pos)
         snp_cluster_adm.append(snp_cluster)
 
-    return (np.array(h_adm), np.array(jump_adm), np.array(snp_cluster_adm))
+    return (np.array(h_adm), np.array(snp_cluster_adm))
 
 default_pipeline_hapmix = partial(pipeline_hapmix, jumps_builder=jumps_6, cluster_builder=cluster_default)
 
 def cluster_multiple_pops(gen_map, weights):
     alphas = np.random.dirichlet(weights)
-    clusters = np.argmax(np.random.multinomial(1, alphas, 100000), axis=1)
+    clusters = np.argmax(np.random.multinomial(1, alphas, len(gen_map)), axis=1)
     return clusters
 
 def jumps_multiple_pops(gen_map, lambdas, clusters):
