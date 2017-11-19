@@ -32,6 +32,21 @@ h_adm, clusters = loc_anc.run(pop_1=H_ceu, pop_2=H_yri)
 ```
 We obtain `h_adm` a numpy array of admixed haplotypes and `clusters` is an array indicating from which population is the SNP selected from.
 
+You can wrap the functions, to build one function.
+```python
+import aede.simulator as simu
+from functools import partial
+
+def h_adm_simu(lambd, H_1, H_2, genmap, mu=0.8, sigma2=0.01):
+    jumps_fun = partial(simu.jumps_builder, lambd=lambd)
+    cluster_fun = partial(simu.cluster_builder, a_beta=mu, b_beta=sigma2)
+
+    loc_anc = simu.LocalAncestrySimulator(genmap, simu.pipeline_hapmix)
+    h_adm, clusters = loc_anc.run(pop_1=H_1, pop_2=H_2,
+                                  jumps_builder=jumps_fun,
+                                  cluster_builder=cluster_fun)
+    return h_adm, clusters"
+```
 # Full Example
 
 ```python
@@ -53,20 +68,3 @@ h_adm, clusters = loc_anc.run(pop_1=H_ceu, pop_2=H_yri,
                               jumps_builder=jumps_10,
                               cluster_builder=simu.cluster_default) 
 ```
-
-# Simple Usage
-
-```python
-import numpy as np
-
-H_ceu = np.load("H_ceu.npy")
-H_yri = np.load("H_yri.npy")
-
-gen_map = np.load("gen_map.npy")
-
-import aede.simulator as simu
-
-# Custom lambda parameter for exponential law
-h_adm, clusters = simu.default_pipeline_hapmix()
-```
-
